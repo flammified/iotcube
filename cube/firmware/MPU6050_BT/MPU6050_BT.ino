@@ -45,6 +45,8 @@ THE SOFTWARE.
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
 #include <SoftwareSerial.h>
+#include <math.h>
+#include <stdlib.h>
 
 const int RX_PIN = 10;
 const int TX_PIN = 9;
@@ -123,7 +125,9 @@ MPU6050 mpu;
 // format used for the InvenSense teapot demo
 //#define OUTPUT_TEAPOT
 
-
+float val;
+char buff[10];
+String valueString = "";
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 bool blinkState = false;
@@ -322,18 +326,17 @@ void loop() {
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
             //Serial.print("ypr\t");
-            //Serial.print(ypr[0] * 180/M_PI);
+            //int bytesent = Serial.write((byte)(ypr[0] * 180/M_PI))
+            val = ypr[0] * 180/M_PI;
+            dtostrf(val, 4, 6, buff);
+            valueString = buff;
+            Serial.println(ypr[0] * 180/M_PI);
             //Serial.print("\t");
             //Serial.print(ypr[1] * 180/M_PI);
             //Serial.print("\t");
             //Serial.println(ypr[2] * 180/M_PI);
-            bluetooth.write(ypr[0] * 180/M_PI);
-        #endif
-                 
-        if (bluetooth.available()) {
-            Serial.println(bluetooth.read());
-          }
-                
+            bluetooth.println(valueString);
+        #endif       
 
         #ifdef OUTPUT_READABLE_REALACCEL
             // display real acceleration, adjusted to remove gravity
