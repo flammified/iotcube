@@ -38,10 +38,14 @@ int intPin = 12;  // These can be changed, 2 and 3 are the Arduinos ext int pins
 int myLed  = 13;  // Set up pin 13 led for toggling
 const int RX_PIN = 11;
 const int TX_PIN = 10;
-float val;
-char buff[10];
-char buff2[10];
-char buff3[10];
+float yawval;
+float pitchval;
+float rollval;
+char yawbuff[8];
+char pitchbuff[8];
+char rollbuff[8];
+char separator[1] = {':'};
+char finalbuff[28];
 String valueString = "";
 
 SoftwareSerial bluetooth(RX_PIN, TX_PIN);
@@ -299,10 +303,19 @@ void loop()
         Serial.print(myIMU.pitch, 2);
         Serial.print(", ");
         Serial.println(myIMU.roll, 2);
-        val = myIMU.pitch;
-        dtostrf(val, 4, 6, buff);
-        valueString = buff;
-        bluetooth.write(buff);
+        yawval = myIMU.yaw;
+        pitchval = myIMU.pitch;
+        rollval = myIMU.roll;
+        dtostrf(yawval, 4, 2, yawbuff);
+        dtostrf(pitchval, 4, 2, pitchbuff);
+        dtostrf(rollval, 4, 2, rollbuff);
+        //valueString = buff;
+        strcpy(finalbuff, yawbuff);
+        strcat(finalbuff, separator);
+        strcat(finalbuff, pitchbuff);
+        strcat(finalbuff, separator);
+        strcat(finalbuff, rollbuff);
+        bluetooth.write(finalbuff);
         Serial.print("rate = ");
         Serial.print((float)myIMU.sumCount/myIMU.sum, 2);
         Serial.println(" Hz");
