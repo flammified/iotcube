@@ -31,12 +31,12 @@
 #include <stdlib.h>
 
 #define AHRS true         // Set to false for basic data read
-#define SerialDebug false  // Set to true to get Serial output for debugging
+#define SerialDebug true  // Set to true to get Serial output for debugging
 
 // Pin definitions
 int intPin = 12;  // These can be changed, 2 and 3 are the Arduinos ext int pins
 int myLed  = 13;  // Set up pin 13 led for toggling
-const int RX_PIN = 5;
+const int RX_PIN = 7;
 const int TX_PIN = 6;
 float yawval;
 float pitchval;
@@ -56,8 +56,8 @@ void setup()
 {
   Wire.begin();
   // TWBR = 12;  // 400 kbit/sec I2C speed
-  Serial.begin(38400);
-  bluetooth.begin(9600);
+  Serial.begin(9600);
+  bluetooth.begin(115200);
 
   // Set up the interrupt pin, its set as active high, push-pull
   pinMode(intPin, INPUT);
@@ -290,7 +290,7 @@ void loop()
       myIMU.pitch *= RAD_TO_DEG;
       myIMU.yaw   *= RAD_TO_DEG;
       // Declination of SparkFun Electronics (40°05'26.6"N 105°11'05.9"W) is
-      // 	8° 30' E  ± 0° 21' (or 8.5°) on 2016-07-19
+      //   8° 30' E  ± 0° 21' (or 8.5°) on 2016-07-19
       // - http://www.ngdc.noaa.gov/geomag-web/#declination
       myIMU.yaw   -= 8.5;
       myIMU.roll  *= RAD_TO_DEG;
